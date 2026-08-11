@@ -13,10 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  export const metadata: Metadata = {
   title: "Sweet Bakes - ร้านขายเบเกอรี่และขนมปังโฮมเมด",
   description: "สั่งซื้อเบเกอรี่ เค้ก และขนมปังอบสดใหม่ส่งตรงถึงบ้านคุณ",
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="th"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
