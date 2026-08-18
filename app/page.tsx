@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
+import React, { useState } from 'react';
 
 interface Product {
   id: number;
@@ -11,13 +10,10 @@ interface Product {
   image: string;
 }
 
-interface CartItem extends Product {
-  quantity?: number;
-}
-
 export default function SweetBakesPage() {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<Product[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [notification, setNotification] = useState('');
 
   const bakeryItems: Product[] = [
     {
@@ -45,18 +41,8 @@ export default function SweetBakesPage() {
 
   const addToCart = (item: Product) => {
     setCart((prevCart) => [...prevCart, item]);
-
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 1500,
-      timerProgressBar: true
-    });
-    Toast.fire({
-      icon: 'success',
-      title: `เพิ่ม ${item.name} ลงตะกร้าแล้ว`
-    });
+    setNotification(`เพิ่ม ${item.name} ลงตะกร้าแล้ว!`);
+    setTimeout(() => setNotification(''), 2000);
   };
 
   const removeFromCart = (index: number) => {
@@ -67,33 +53,28 @@ export default function SweetBakesPage() {
 
   const checkout = () => {
     if (cart.length === 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'ตะกร้าสินค้าว่างเปล่า',
-        text: 'กรุณาเลือกเบเกอรีก่อนทำการสั่งซื้อครับ',
-        confirmButtonColor: '#d97706'
-      });
+      alert('กรุณาเลือกเบเกอรีก่อนทำการสั่งซื้อครับ');
       return;
     }
-
-    Swal.fire({
-      icon: 'success',
-      title: 'สั่งซื้อสำเร็จ! 🥐',
-      text: 'ระบบได้รับออเดอร์เบเกอรีของคุณเรียบร้อยแล้ว',
-      confirmButtonColor: '#d97706',
-      timer: 2500
-    });
-
+    alert('สั่งซื้อสำเร็จ! ระบบได้รับออเดอร์เรียบร้อยแล้ว 🥐');
     setCart([]);
     setIsCartOpen(false);
   };
 
   return (
     <div style={{ backgroundColor: '#fffdf9', color: '#292524', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'Kanit, sans-serif' }}>
+      
+      {/* แจ้งเตือนมุมขวาบนเวลาเพิ่มสินค้า */}
+      {notification && (
+        <div style={{ position: 'fixed', top: '20px', right: '20px', backgroundColor: '#d97706', color: 'white', padding: '12px 20px', borderRadius: '8px', zIndex: 3000, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', fontWeight: 500 }}>
+          {notification}
+        </div>
+      )}
+
       {/* HEADER */}
       <header style={{ backgroundColor: '#fffdf9', borderBottom: '1px solid #fef3c7', position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '22px', fontWeight: 700, color: '#451a03', cursor: 'pointer' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '22px', fontWeight: 700, color: '#451a03' }}>
             <span style={{ color: '#d97706' }}>🥐</span>
             <span>Sweet Bakes</span>
           </div>
@@ -105,7 +86,7 @@ export default function SweetBakesPage() {
           </ul>
           <button 
             onClick={() => setIsCartOpen(!isCartOpen)}
-            style={{ backgroundColor: '#d97706', color: 'white', border: 'none', padding: '10px 22px', borderRadius: '30px', fontSize: '15px', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(217, 119, 6, 0.2)' }}
+            style={{ backgroundColor: '#d97706', color: 'white', border: 'none', padding: '10px 22px', borderRadius: '30px', fontSize: '15px', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             🛒 ตะกร้าสินค้า ({cart.length})
           </button>
