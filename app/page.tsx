@@ -1,485 +1,187 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <title>Sweet Bakes - ร้านขายเบเกอรี่</title>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SweetAlert2 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+'use client';
 
-  <style>
-    :root {
-      --bg-cream: #fffdf9;
-      --primary-orange: #d97706;
-      --dark-brown: #451a03;
-      --accent-orange: #fbbf24;
-      --border-color: #fde68a;
-      --text-main: #292524;
+import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  badge: string;
+  image: string;
+}
+
+interface CartItem extends Product {
+  quantity?: number;
+}
+
+export default function SweetBakesPage() {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const bakeryItems: Product[] = [
+    {
+      id: 1,
+      name: "Fresh Croissant",
+      price: 85,
+      badge: "Best Seller",
+      image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400"
+    },
+    {
+      id: 2,
+      name: "Strawberry Shortcake",
+      price: 140,
+      badge: "Fresh Daily",
+      image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"
+    },
+    {
+      id: 3,
+      name: "Sourdough Bread",
+      price: 120,
+      badge: "Artisan",
+      image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400"
+    }
+  ];
+
+  const addToCart = (item: Product) => {
+    setCart((prevCart) => [...prevCart, item]);
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true
+    });
+    Toast.fire({
+      icon: 'success',
+      title: `เพิ่ม ${item.name} ลงตะกร้าแล้ว`
+    });
+  };
+
+  const removeFromCart = (index: number) => {
+    setCart((prevCart) => prevCart.filter((_, i) => i !== index));
+  };
+
+  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+
+  const checkout = () => {
+    if (cart.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'ตะกร้าสินค้าว่างเปล่า',
+        text: 'กรุณาเลือกเบเกอรีก่อนทำการสั่งซื้อครับ',
+        confirmButtonColor: '#d97706'
+      });
+      return;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Kanit', sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-cream);
-      color: var(--text-main);
-      padding-bottom: 80px;
-    }
-
-    /* HEADER */
-    .header {
-      background: var(--bg-cream);
-      border-bottom: 1px solid #fef3c7;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    }
-
-    .header-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--dark-brown);
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .brand-logo i {
-      color: var(--primary-orange);
-      font-size: 24px;
-    }
-
-    .nav-menu {
-      display: flex;
-      gap: 30px;
-      list-style: none;
-      font-size: 15px;
-      font-weight: 400;
-    }
-
-    .nav-menu a {
-      text-decoration: none;
-      color: var(--text-main);
-      transition: color 0.2s;
-    }
-
-    .nav-menu a:hover {
-      color: var(--primary-orange);
-    }
-
-    .btn-cart-nav {
-      background: var(--primary-orange);
-      color: white;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 30px;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
-      transition: background 0.2s;
-    }
-
-    .btn-cart-nav:hover {
-      background: #b45309;
-    }
-
-    /* CONTAINER & SECTIONS */
-    .container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 24px;
-    }
-
-    .section-header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .section-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--dark-brown);
-      margin-bottom: 8px;
-    }
-
-    .section-desc {
-      font-size: 15px;
-      color: #78716c;
-    }
-
-    /* PRODUCTS GRID */
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 30px;
-    }
-
-    .product-card {
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .product-img-container {
-      position: relative;
-      width: 100%;
-      height: 220px;
-    }
-
-    .product-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .product-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--dark-brown);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
-    .product-body {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      justify-content: space-between;
-    }
-
-    .product-name {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--dark-brown);
-      margin-bottom: 12px;
-    }
-
-    .product-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 15px;
-    }
-
-    .product-price {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary-orange);
-    }
-
-    .btn-add-cart {
-      background: var(--dark-brown);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-add-cart:hover {
-      background: var(--primary-orange);
-    }
-
-    /* CART DRAWER */
-    .cart-drawer {
-      position: fixed;
-      top: 0;
-      right: -380px;
-      width: 350px;
-      height: 100%;
-      background: white;
-      box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-      z-index: 2000;
-      transition: right 0.3s ease;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .cart-drawer.open {
-      right: 0;
-    }
-
-    .cart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #f3f4f6;
-      padding-bottom: 15px;
-      margin-bottom: 15px;
-    }
-
-    .cart-items-list {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .cart-item {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px dashed #e5e7eb;
-      align-items: center;
-    }
-
-    .cart-item-img {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-
-    .cart-footer {
-      border-top: 1px solid #f3f4f6;
-      padding-top: 15px;
-    }
-
-    .checkout-btn {
-      width: 100%;
-      background: var(--primary-orange);
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 15px;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: background 0.2s;
-    }
-
-    .checkout-btn:hover {
-      background: #b45309;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header-container">
-      <a class="brand-logo" href="#">
-        <i class="fa-solid fa- croissant"></i>
-        <span>Sweet Bakes</span>
-      </a>
-      <ul class="nav-menu">
-        <li><a href="#" style="color: var(--primary-orange); font-weight: 500;">หน้าแรก</a></li>
-        <li><a href="#">เมนูทั้งหมด</a></li>
-        <li><a href="#">เกี่ยวกับเรา</a></li>
-        <li><a href="#">ติดต่อ</a></li>
-      </ul>
-      <button class="btn-cart-nav" onclick="toggleCart()">
-        <i class="fa-solid fa-basket-shopping"></i> ตะกร้าสินค้า (<span id="cartCount">0</span>)
-      </button>
-    </div>
-  </header>
-
-  <!-- MAIN CONTENT -->
-  <main class="container">
-    <div class="section-header">
-      <h2 class="section-title">เมนูขายดีประจำสัปดาห์</h2>
-      <p class="section-desc">เมนูยอดฮิตที่ลูกค้าของเราชื่นชอบมากที่สุด</p>
-    </div>
-
-    <div class="products-grid" id="bakeryProductsGrid">
-      <!-- ข้อมูลสินค้าจะถูกแสดงผลด้วย JavaScript ด้านล่าง -->
-    </div>
-  </main>
-
-  <!-- CART DRAWER -->
-  <div class="cart-drawer" id="cartDrawer">
-    <div class="cart-header">
-      <h3 style="color: var(--dark-brown);"><i class="fa-solid fa-basket-shopping"></i> ตะกร้าสินค้า</h3>
-      <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 18px;" onclick="toggleCart()"></i>
-    </div>
-    <div class="cart-items-list" id="cartItemsList">
-      <p style="text-align: center; color: #a8a29e; margin-top: 30px;">ไม่มีสินค้าในตะกร้า</p>
-    </div>
-    <div class="cart-footer">
-      <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 16px; color: var(--dark-brown);">
-        <span>ราคารวมทั้งหมด:</span>
-        <span id="cartTotal" style="color: var(--primary-orange);">฿0</span>
-      </div>
-      <button class="checkout-btn" onclick="checkout()">สั่งซื้อสินค้า</button>
-    </div>
-  </div>
-
-  <!-- SCRIPT -->
-  <script>
-    let cart = [];
-
-    // รายการสินค้าเบเกอรีตามหน้าจอตัวอย่าง
-    const bakeryItems = [
-      {
-        id: 1,
-        name: "Fresh Croissant",
-        price: 85,
-        badge: "Best Seller",
-        image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400"
-      },
-      {
-        id: 2,
-        name: "Strawberry Shortcake",
-        price: 140,
-        badge: "Fresh Daily",
-        image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"
-      },
-      {
-        id: 3,
-        name: "Sourdough Bread",
-        price: 120,
-        badge: "Artisan",
-        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400"
-      }
-    ];
-
-    // โหลดสินค้าแสดงผลหน้าเว็บ
-    document.addEventListener("DOMContentLoaded", function() {
-      const grid = document.getElementById('bakeryProductsGrid');
-      grid.innerHTML = bakeryItems.map(item => `
-        <div class="product-card">
-          <div class="product-img-container">
-            <span class="product-badge">${item.badge}</span>
-            <img src="${item.image}" class="product-img" alt="${item.name}">
-          </div>
-          <div class="product-body">
-            <div class="product-name">${item.name}</div>
-            <div class="product-footer">
-              <span class="product-price">฿${item.price}</span>
-              <button class="btn-add-cart" onclick="addToCart('${item.name}', ${item.price}, '${item.image}')">
-                <i class="fa-solid fa-plus"></i> เพิ่มลงตะกร้า
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('');
+    Swal.fire({
+      icon: 'success',
+      title: 'สั่งซื้อสำเร็จ! 🥐',
+      text: 'ระบบได้รับออเดอร์เบเกอรีของคุณเรียบร้อยแล้ว',
+      confirmButtonColor: '#d97706',
+      timer: 2500
     });
 
-    // ฟังก์ชันเพิ่มลงตะกร้าพร้อม Toast แจ้งเตือน
-    function addToCart(name, price, image) {
-      cart.push({ name, price, image });
-      updateCartUI();
+    setCart([]);
+    setIsCartOpen(false);
+  };
 
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true
-      });
-      Toast.fire({
-        icon: 'success',
-        title: 'เพิ่ม ' + name + ' ลงตะกร้าแล้ว'
-      });
-    }
-
-    // อัปเดตหน้าต่างตะกร้าสินค้า
-    function updateCartUI() {
-      document.getElementById('cartCount').innerText = cart.length;
-      const listContainer = document.getElementById('cartItemsList');
-
-      if (cart.length === 0) {
-        listContainer.innerHTML = '<p style="text-align: center; color: #a8a29e; margin-top: 30px;">ไม่มีสินค้าในตะกร้า</p>';
-        document.getElementById('cartTotal').innerText = '฿0';
-        return;
-      }
-
-      let total = 0;
-      listContainer.innerHTML = cart.map((item, index) => {
-        total += item.price;
-        return `
-          <div class="cart-item">
-            <img src="${item.image}" class="cart-item-img">
-            <div style="flex: 1;">
-              <div style="font-size: 14px; font-weight: 500; color: var(--dark-brown);">${item.name}</div>
-              <div style="color: var(--primary-orange); font-weight: bold; font-size: 14px;">฿${item.price}</div>
-            </div>
-            <i class="fa-solid fa-trash" style="color: #ef4444; cursor: pointer;" onclick="removeFromCart(${index})"></i>
+  return (
+    <div style={{ backgroundColor: '#fffdf9', color: '#292524', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'Kanit, sans-serif' }}>
+      {/* HEADER */}
+      <header style={{ backgroundColor: '#fffdf9', borderBottom: '1px solid #fef3c7', position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '22px', fontWeight: 700, color: '#451a03', cursor: 'pointer' }}>
+            <span style={{ color: '#d97706' }}>🥐</span>
+            <span>Sweet Bakes</span>
           </div>
-        `;
-      }).join('');
+          <ul style={{ display: 'flex', gap: '30px', listStyle: 'none', fontSize: '15px' }}>
+            <li><a href="#" style={{ textDecoration: 'none', color: '#d97706', fontWeight: 500 }}>หน้าแรก</a></li>
+            <li><a href="#" style={{ textDecoration: 'none', color: '#292524' }}>เมนูทั้งหมด</a></li>
+            <li><a href="#" style={{ textDecoration: 'none', color: '#292524' }}>เกี่ยวกับเรา</a></li>
+            <li><a href="#" style={{ textDecoration: 'none', color: '#292524' }}>ติดต่อ</a></li>
+          </ul>
+          <button 
+            onClick={() => setIsCartOpen(!isCartOpen)}
+            style={{ backgroundColor: '#d97706', color: 'white', border: 'none', padding: '10px 22px', borderRadius: '30px', fontSize: '15px', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(217, 119, 6, 0.2)' }}
+          >
+            🛒 ตะกร้าสินค้า ({cart.length})
+          </button>
+        </div>
+      </header>
 
-      document.getElementById('cartTotal').innerText = `฿${total}`;
-    }
+      {/* MAIN CONTENT */}
+      <main style={{ maxWidth: '1200px', margin: '40px auto', padding: '0 24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h2 style={{ fontSize: '28px', fontWeight: 700, color: '#451a03', marginBottom: '8px' }}>เมนูขายดีประจำสัปดาห์</h2>
+          <p style={{ fontSize: '15px', color: '#78716c' }}>เมนูยอดฮิตที่ลูกค้าของเราชื่นชอบมากที่สุด</p>
+        </div>
 
-    // ลบสินค้าออกจากตะกร้า
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      updateCartUI();
-    }
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '30px' }}>
+          {bakeryItems.map((item) => (
+            <div key={item.id} style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', border: '1px solid #fde68a', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ position: 'relative', width: '100%', height: '220px' }}>
+                <span style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255, 255, 255, 0.9)', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 500, color: '#451a03' }}>
+                  {item.badge}
+                </span>
+                <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                <div style={{ fontSize: '18px', fontWeight: 600, color: '#451a03', marginBottom: '12px' }}>{item.name}</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '15px' }}>
+                  <span style={{ fontSize: '20px', fontWeight: 700, color: '#d97706' }}>฿{item.price}</span>
+                  <button 
+                    onClick={() => addToCart(item)}
+                    style={{ backgroundColor: '#451a03', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, cursor: 'pointer' }}
+                  >
+                    + เพิ่มลงตะกร้า
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
 
-    // เปิดปิด Drawer ตะกร้าสินค้า
-    function toggleCart() {
-      document.getElementById('cartDrawer').classList.toggle('open');
-    }
+      {/* CART DRAWER */}
+      <div style={{ position: 'fixed', top: 0, right: isCartOpen ? '0' : '-380px', width: '350px', height: '100%', background: 'white', boxShadow: '-5px 0 25px rgba(0,0,0,0.1)', zIndex: 2000, transition: 'right 0.3s ease', padding: '24px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f3f4f6', paddingBottom: '15px', marginBottom: '15px' }}>
+          <h3 style={{ color: '#451a03' }}>🛒 ตะกร้าสินค้า</h3>
+          <span style={{ cursor: 'pointer', fontSize: '18px', fontWeight: 'bold' }} onClick={() => setIsCartOpen(false)}>✕</span>
+        </div>
+        
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {cart.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#a8a29e', marginTop: '30px' }}>ไม่มีสินค้าในตะกร้า</p>
+          ) : (
+            cart.map((item, index) => (
+              <div key={index} style={{ display: 'flex', gap: '12px', marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px dashed #e5e7eb', alignItems: 'center' }}>
+                <img src={item.image} alt={item.name} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: '#451a03' }}>{item.name}</div>
+                  <div style={{ color: '#d97706', fontWeight: 'bold', fontSize: '14px' }}>฿{item.price}</div>
+                </div>
+                <span style={{ color: '#ef4444', cursor: 'pointer' }} onClick={() => removeFromCart(index)}>🗑️</span>
+              </div>
+            ))
+          )}
+        </div>
 
-    // ฟังก์ชันสั่งซื้อ (เชื่อมต่อ Google Sheets หรือจำลอง)
-    function checkout() {
-      if (cart.length === 0) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'ตะกร้าสินค้าว่างเปล่า',
-          text: 'กรุณาเลือกเบเกอรีก่อนทำการสั่งซื้อครับ',
-          confirmButtonColor: '#d97706'
-        });
-        return;
-      }
-
-      Swal.fire({
-        icon: 'success',
-        title: 'สั่งซื้อสำเร็จ! 🥐',
-        text: 'ระบบได้รับออเดอร์เบเกอรีของคุณเรียบร้อยแล้ว',
-        confirmButtonColor: '#d97706',
-        timer: 2500
-      });
-
-      cart = [];
-      updateCartUI();
-      toggleCart();
-    }
-  </script>
-</body>
-</html>
+        <div style={{ borderTop: '1px solid #f3f4f6', paddingTop: '15px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, fontSize: '16px', color: '#451a03' }}>
+            <span>ราคารวมทั้งหมด:</span>
+            <span style={{ color: '#d97706' }}>฿{totalPrice}</span>
+          </div>
+          <button 
+            onClick={checkout}
+            style={{ width: '100%', backgroundColor: '#d97706', color: 'white', border: 'none', padding: '12px', borderRadius: '8px', fontWeight: 600, fontSize: '15px', cursor: 'pointer', marginTop: '12px' }}
+          >
+            สั่งซื้อสินค้า
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
