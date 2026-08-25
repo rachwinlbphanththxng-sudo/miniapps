@@ -55,8 +55,8 @@ export default function SweetBakesPage() {
       price: 110,
       badge: "🍵 มัทฉะแท้",
       character: "🐼 น้องแพนด้าชาเขียว",
-      // เปลี่ยนลิงก์รูปเป็นเค้กชาเขียวมัทฉะสีเขียวสวยๆ
-      image: "https://images.unsplash.com/photo-1536489871664-d12a52709e86?w=400"
+      // เปลี่ยนลิงก์ใหม่ที่รองรับการแสดงผลแน่นอน
+      image: "https://images.unsplash.com/photo-1579372786545-d24232daf58c?w=400"
     },
     {
       id: 6,
