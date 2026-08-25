@@ -198,7 +198,7 @@ export default function SweetBakesPage() {
             <span style={{ fontSize: '48px', display: 'block', marginBottom: '10px' }}>📞</span>
             <h3 style={{ color: '#713f12', fontSize: '22px', fontWeight: 700, marginBottom: '15px' }}>ติดต่อเรา Sweet Bakes Cafe</h3>
             <div style={{ textAlign: 'left', background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #fef08a', fontSize: '14px', color: '#713f12', lineHeight: '1.8' }}>
-              <p>📍 <b>ที่อยู่:</b> 99/9 ถนนสุขใจ แขวงเบเกอรี เขตอร่อย กรุงเทพฯ</p>
+              <p>📍 <b>ที่อยู่:</b> 99/9 ถนนสุขใจ อำเภอเมือง จังหวัดสุโขทัย</p>
               <p>☎️ <b>โทรศัพท์:</b> 02-123-4567</p>
               <p>💬 <b>Line Official:</b> @sweetbakes</p>
               <p>⏰ <b>เวลาเปิด-ปิด:</b> เปิดทุกวัน 09:00 - 20:00 น.</p>
