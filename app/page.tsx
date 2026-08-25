@@ -16,7 +16,6 @@ export default function SweetBakesPage() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [notification, setNotification] = useState('');
 
-  // รายการเค้กพร้อมคาแรกเตอร์ตัวการ์ตูนสุดน่ารัก
   const bakeryItems: Product[] = [
     {
       id: 1,
@@ -40,7 +39,8 @@ export default function SweetBakesPage() {
       price: 99,
       badge: "🧈 หอมเนยแท้",
       character: "🐥 น้องเจี๊ยบเนยสด",
-      image: "https://images.unsplash.com/photo-1535141192574-5d4897c13136?w=400"
+      // เปลี่ยนลิงก์รูปเค้กเนยสดใหม่ให้แสดงผลแน่นอน
+      image: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=400"
     },
     {
       id: 4,
@@ -93,7 +93,6 @@ export default function SweetBakesPage() {
   return (
     <div style={{ backgroundColor: '#fffef0', color: '#451a03', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'Kanit, sans-serif' }}>
       
-      {/* แจ้งเตือนสีเหลืองน่ารักๆ มุมขวาบน */}
       {notification && (
         <div style={{ 
           position: 'fixed', top: '24px', right: '24px', 
@@ -106,7 +105,6 @@ export default function SweetBakesPage() {
         </div>
       )}
 
-      {/* HEADER ธีมสีเหลืองพาสเทล */}
       <header style={{ backgroundColor: 'rgba(254, 240, 138, 0.85)', backdropFilter: 'blur(10px)', borderBottom: '2px solid #fef08a', position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 4px 20px rgba(250, 204, 21, 0.1)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '18px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '24px', fontWeight: 700, color: '#713f12' }}>
@@ -128,7 +126,6 @@ export default function SweetBakesPage() {
         </div>
       </header>
 
-      {/* MAIN CONTENT */}
       <main style={{ maxWidth: '1200px', margin: '50px auto', padding: '0 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
           <span style={{ backgroundColor: '#fef9c3', color: '#854d0e', padding: '8px 20px', borderRadius: '30px', fontSize: '14px', fontWeight: 700, display: 'inline-block', marginBottom: '12px', border: '1px solid #fef08a' }}>
@@ -176,7 +173,6 @@ export default function SweetBakesPage() {
         </div>
       </main>
 
-      {/* CART DRAWER */}
       <div style={{ 
         position: 'fixed', top: 0, right: isCartOpen ? '0' : '-420px', 
         width: '380px', height: '100%', background: '#fffef0', 
