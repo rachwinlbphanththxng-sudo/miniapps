@@ -39,7 +39,6 @@ export default function SweetBakesPage() {
       price: 99,
       badge: "🧈 หอมเนยแท้",
       character: "🐥 น้องเจี๊ยบเนยสด",
-      // เปลี่ยนลิงก์รูปเค้กเนยสดใหม่ให้แสดงผลแน่นอน
       image: "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=400"
     },
     {
@@ -56,7 +55,8 @@ export default function SweetBakesPage() {
       price: 110,
       badge: "🍵 มัทฉะแท้",
       character: "🐼 น้องแพนด้าชาเขียว",
-      image: "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?w=400"
+      // เปลี่ยนลิงก์รูปเป็นเค้กชาเขียวมัทฉะสีเขียวสวยๆ
+      image: "https://images.unsplash.com/photo-1536489871664-d12a52709e86?w=400"
     },
     {
       id: 6,
