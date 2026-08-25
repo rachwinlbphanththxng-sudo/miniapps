@@ -15,6 +15,7 @@ export default function SweetBakesPage() {
   const [cart, setCart] = useState<Product[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [notification, setNotification] = useState('');
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   const bakeryItems: Product[] = [
     {
@@ -89,6 +90,11 @@ export default function SweetBakesPage() {
     setIsCartOpen(false);
   };
 
+  const scrollToHome = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div style={{ backgroundColor: '#fffef0', color: '#451a03', minHeight: '100vh', paddingBottom: '80px', fontFamily: 'Kanit, sans-serif' }}>
       
@@ -110,11 +116,11 @@ export default function SweetBakesPage() {
             <span style={{ fontSize: '28px' }}>🐥</span>
             <span style={{ background: 'linear-gradient(45deg, #713f12, #ca8a04)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Sweet Bakes Cafe</span>
           </div>
-          <ul style={{ display: 'flex', gap: '35px', listStyle: 'none', fontSize: '15px', fontWeight: 500 }}>
-            <li><a href="#" style={{ textDecoration: 'none', color: '#ca8a04', fontWeight: 700 }}>🏠 หน้าแรก</a></li>
-            <li><a href="#" style={{ textDecoration: 'none', color: '#854d0e' }}>🍰 เมนูเค้ก</a></li>
-            <li><a href="#" style={{ textDecoration: 'none', color: '#854d0e' }}>🧸 เกี่ยวกับเรา</a></li>
-            <li><a href="#" style={{ textDecoration: 'none', color: '#854d0e' }}>📞 ติดต่อเรา</a></li>
+          <ul style={{ display: 'flex', gap: '35px', listStyle: 'none', fontSize: '15px', fontWeight: 500, alignItems: 'center' }}>
+            <li><a href="#" onClick={scrollToHome} style={{ textDecoration: 'none', color: '#ca8a04', fontWeight: 700, cursor: 'pointer' }}>🏠 หน้าแรก</a></li>
+            <li><a href="#" onClick={scrollToHome} style={{ textDecoration: 'none', color: '#854d0e', cursor: 'pointer' }}>🍰 เมนูเค้ก</a></li>
+            <li><a href="#" onClick={(e) => { e.preventDefault(); alert('🧸 Sweet Bakes Cafe คาเฟ่เค้กโฮมเมดอบสดใหม่ทุกวันด้วยวัตถุดิบพรีเมียม เพื่อรอยยิ้มของคุณลูกค้าค่ะ!'); }} style={{ textDecoration: 'none', color: '#854d0e', cursor: 'pointer' }}>🧸 เกี่ยวกับเรา</a></li>
+            <li><a href="#" onClick={(e) => { e.preventDefault(); setIsContactOpen(true); }} style={{ textDecoration: 'none', color: '#854d0e', cursor: 'pointer' }}>📞 ติดต่อเรา</a></li>
           </ul>
           <button 
             onClick={() => setIsCartOpen(!isCartOpen)}
@@ -172,6 +178,30 @@ export default function SweetBakesPage() {
         </div>
       </main>
 
+      {/* Modal ติดต่อเรา */}
+      {isContactOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 4000, backdropFilter: 'blur(5px)' }}>
+          <div style={{ background: '#fffef0', padding: '35px', borderRadius: '24px', width: '400px', boxShadow: '0 20px 40px rgba(250, 204, 21, 0.3)', border: '2px solid #fef08a', position: 'relative', textAlign: 'center' }}>
+            <span style={{ position: 'absolute', top: '16px', right: '16px', cursor: 'pointer', fontSize: '16px', color: '#713f12', background: '#fef08a', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontWeight: 'bold' }} onClick={() => setIsContactOpen(false)}>✕</span>
+            <span style={{ fontSize: '48px', display: 'block', marginBottom: '10px' }}>📞</span>
+            <h3 style={{ color: '#713f12', fontSize: '22px', fontWeight: 700, marginBottom: '15px' }}>ติดต่อเรา Sweet Bakes Cafe</h3>
+            <div style={{ textAlign: 'left', background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #fef08a', fontSize: '14px', color: '#713f12', lineHeight: '1.8' }}>
+              <p>📍 <b>ที่อยู่:</b> 99/9 ถนนสุขใจ แขวงเบเกอรี เขตอร่อย กรุงเทพฯ</p>
+              <p>☎️ <b>โทรศัพท์:</b> 02-123-4567</p>
+              <p>💬 <b>Line Official:</b> @sweetbakes</p>
+              <p>⏰ <b>เวลาเปิด-ปิด:</b> เปิดทุกวัน 09:00 - 20:00 น.</p>
+            </div>
+            <button 
+              onClick={() => setIsContactOpen(false)}
+              style={{ marginTop: '20px', backgroundColor: '#eab308', color: 'white', border: 'none', padding: '10px 24px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', fontSize: '14px' }}
+            >
+              ปิดหน้าต่าง
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Slide ตะกร้าสินค้า */}
       <div style={{ 
         position: 'fixed', top: 0, right: isCartOpen ? '0' : '-420px', 
         width: '380px', height: '100%', background: '#fffef0', 
