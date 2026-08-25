@@ -90,9 +90,21 @@ export default function SweetBakesPage() {
     setIsCartOpen(false);
   };
 
-  const scrollToHome = (e: React.MouseEvent) => {
+  const scrollToTop = (e: React.MouseEvent) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setNotification('🏠 คุณอยู่ที่หน้าแรกแล้วค่า!');
+    setTimeout(() => setNotification(''), 2000);
+  };
+
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const element = document.getElementById('menu-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setNotification('🍰 ยินดีต้อนรับสู่เมนูเค้กแสนอร่อย!');
+    setTimeout(() => setNotification(''), 2000);
   };
 
   return (
@@ -117,8 +129,8 @@ export default function SweetBakesPage() {
             <span style={{ background: 'linear-gradient(45deg, #713f12, #ca8a04)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Sweet Bakes Cafe</span>
           </div>
           <ul style={{ display: 'flex', gap: '35px', listStyle: 'none', fontSize: '15px', fontWeight: 500, alignItems: 'center' }}>
-            <li><a href="#" onClick={scrollToHome} style={{ textDecoration: 'none', color: '#ca8a04', fontWeight: 700, cursor: 'pointer' }}>🏠 หน้าแรก</a></li>
-            <li><a href="#" onClick={scrollToHome} style={{ textDecoration: 'none', color: '#854d0e', cursor: 'pointer' }}>🍰 เมนูเค้ก</a></li>
+            <li><a href="#" onClick={scrollToTop} style={{ textDecoration: 'none', color: '#ca8a04', fontWeight: 700, cursor: 'pointer' }}>🏠 หน้าแรก</a></li>
+            <li><a href="#" onClick={handleMenuClick} style={{ textDecoration: 'none', color: '#854d0e', cursor: 'pointer', fontWeight: 700 }}>🍰 เมนูเค้ก</a></li>
             <li><a href="#" onClick={(e) => { e.preventDefault(); alert('🧸 Sweet Bakes Cafe คาเฟ่เค้กโฮมเมดอบสดใหม่ทุกวันด้วยวัตถุดิบพรีเมียม เพื่อรอยยิ้มของคุณลูกค้าค่ะ!'); }} style={{ textDecoration: 'none', color: '#854d0e', cursor: 'pointer' }}>🧸 เกี่ยวกับเรา</a></li>
             <li><a href="#" onClick={(e) => { e.preventDefault(); setIsContactOpen(true); }} style={{ textDecoration: 'none', color: '#854d0e', cursor: 'pointer' }}>📞 ติดต่อเรา</a></li>
           </ul>
@@ -131,7 +143,7 @@ export default function SweetBakesPage() {
         </div>
       </header>
 
-      <main style={{ maxWidth: '1200px', margin: '50px auto', padding: '0 24px' }}>
+      <main id="menu-section" style={{ maxWidth: '1200px', margin: '50px auto', padding: '0 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '50px' }}>
           <span style={{ backgroundColor: '#fef9c3', color: '#854d0e', padding: '8px 20px', borderRadius: '30px', fontSize: '14px', fontWeight: 700, display: 'inline-block', marginBottom: '12px', border: '1px solid #fef08a' }}>
             🌟 คาเฟ่เค้กโฮมเมดสุดน่ารัก สีเหลืองละมุนใจ
